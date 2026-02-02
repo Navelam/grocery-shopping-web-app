@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Home - GroceryHub{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align: center; padding: 4rem 2rem;">
+    <h1>🎉 Welcome to GroceryHub!</h1>
+    <p style="font-size: 1.125rem; color: var(--text-light); margin-bottom: 2rem;">
+        Fresh groceries at your fingertips. Quality products, fast delivery.
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 3rem 0;">
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🥬</div>
+            <h3>Fresh Produce</h3>
+            <p>Handpicked vegetables and fruits daily</p>
+        </div>
+        
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+            <h3>Fast Delivery</h3>
+            <p>Quick delivery to your doorstep</p>
+        </div>
+        
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">💰</div>
+            <h3>Best Prices</h3>
+            <p>Competitive pricing on all items</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Register - GroceryHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 style="text-align: center;">Create Account 🚀</h2>
+        
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST" onsubmit="return validateForm('register-form')" id="register-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="John Doe" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 1.5rem; color: var(--text-light);">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: var(--primary); font-weight: 600;">Login here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

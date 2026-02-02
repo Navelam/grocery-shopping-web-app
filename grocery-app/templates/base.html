@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GroceryHub{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}" class="logo">🛒 GroceryHub</a>
+            
+            {% if 'user_id' in session %}
+<ul class="nav-links">
+                <li><a href="{{ url_for('products') }}">Shop</a></li>
+                <li><a href="{{ url_for('orders') }}">My Orders</a></li>
+                <li>
+                    <a href="{{ url_for('cart') }}">
+                        Cart
+                        {% if cart_count %}
+                        <span class="cart-badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li><a href="{{ url_for('logout') }}">Logout ({{ session.user_name }})</a></li>
+            </ul>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 GroceryHub. All rights reserved.</p>
+        <p>🌱 Fresh groceries delivered to your door | 📞 Support: hello@groceryhub.com</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

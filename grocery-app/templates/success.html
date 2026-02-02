@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Order Placed - GroceryHub{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align: center; padding: 3rem 1rem;">
+    <div style="max-width: 500px; margin: 0 auto;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+        <h2>Order Placed Successfully!</h2>
+        <p style="color: var(--text-light); margin-bottom: 2rem;">
+            Thank you for shopping with us. Your order has been confirmed.
+        </p>
+        
+        <div class="card">
+            <h3>Order Details</h3>
+            <div style="text-align: left;">
+                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                    <span>Order ID:</span>
+                    <strong>#{{ order.id }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                    <span>Total Amount:</span>
+                    <strong>₹{{ "%.2f"|format(order.total_amount) }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                    <span>Order Date:</span>
+                    <strong>{{ order.order_date.strftime('%d %b %Y') }}</strong>
+                </div>
+            </div>
+        </div>
+        
+        <p style="color: var(--text-light); margin: 2rem 0;">
+            You will receive an email confirmation shortly.
+        </p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <a href="{{ url_for('orders') }}" class="btn btn-primary">View My Orders</a>
+            <a href="{{ url_for('products') }}" class="btn btn-secondary">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

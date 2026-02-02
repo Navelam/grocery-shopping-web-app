@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align:center;">🛒 Your Shopping Cart</h2>
+
+    {% if cart_items %}
+    <div class="cart-container">
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr id="row-{{ item.id }}">
+                    <td>{{ item.product.name }}</td>
+                   <td class="item-price" data-price="{{ item.product.price }}">
+    ₹{{ "%.2f"|format(item.product.price) }}
+</td>
+                    <td>
+                        <div class="quantity-control">
+                            <button type="button" class="decrease-btn" 
+                                data-cart-id="{{ item.id }}"
+                                {% if item.quantity == 1 %}disabled{% endif %}>
+                                −
+                            </button>
+                            <span class="quantity-display" id="qty-{{ item.id }}">{{ item.quantity }}</span>
+                            <button type="button" class="increase-btn" 
+                                data-cart-id="{{ item.id }}">
+                                +
+                            </button>
+                        </div>
+                    </td>
+                    <td class="item-total" id="total-{{ item.id }}">
+    ₹{{ "%.2f"|format(item.product.price * item.quantity) }}
+</td>
+                    <td>
+                        <button class="btn btn-danger remove-btn" 
+                            data-cart-id="{{ item.id }}">
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="cart-summary">
+            <h3>Order Summary</h3>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotal">₹{{ "%.2f"|format(total) }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span>₹0</span>
+            </div>
+            <div class="summary-row">
+                <strong>Total</strong>
+                <strong id="grand-total">₹{{ "%.2f"|format(total) }}</strong>
+            </div>
+
+            <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block">Proceed to Checkout</a>
+            <a href="{{ url_for('products') }}" class="btn btn-secondary btn-block">Continue Shopping</a>
+        </div>
+    </div>
+    {% else %}
+    <div style="text-align:center; padding:3rem;">
+        <h3>Your cart is empty 😔</h3>
+        <a href="{{ url_for('products') }}" class="btn btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .cart-container {
+        display: flex;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .cart-table {
+        flex: 1;
+        min-width: 300px;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .cart-table th {
+        background: #4CAF50;
+        color: white;
+        padding: 15px;
+        text-align: left;
+    }
+    
+    .cart-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .cart-table tr:hover {
+        background: #f9f9f9;
+    }
+    
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .quantity-control button {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .quantity-control button:hover:not(:disabled) {
+        background: #f0f0f0;
+    }
+    
+    .quantity-control button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .quantity-control span {
+        min-width: 30px;
+        text-align: center;
+        font-weight: bold;
+    }
+    
+    .cart-summary {
+        width: 300px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .summary-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 20px;
+    }
+    
+    .btn-block {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .btn-danger:hover {
+        background: #c82333;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.increase-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const cartId = btn.dataset.cartId;
+            const qtyEl = document.getElementById(`qty-${cartId}`);
+            let qty = parseInt(qtyEl.innerText);
+            updateQuantity(cartId, qty + 1);
+        });
+    });
+
+    document.querySelectorAll('.decrease-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const cartId = btn.dataset.cartId;
+            const qtyEl = document.getElementById(`qty-${cartId}`);
+            let qty = parseInt(qtyEl.innerText);
+            if (qty > 1) updateQuantity(cartId, qty - 1);
+        });
+    });
+
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const cartId = btn.dataset.cartId;
+            removeFromCart(cartId);
+        });
+    });
+
+});
+
+function updateQuantity(cartId, newQty) {
+    fetch(`/update_quantity/${cartId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ quantity: newQty })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Update quantity display
+            const qtyEl = document.getElementById(`qty-${cartId}`);
+            qtyEl.innerText = newQty;
+
+            // Get price
+            const row = document.getElementById(`row-${cartId}`);
+            const price = parseFloat(
+                row.querySelector(".item-price").dataset.price
+            );
+
+            // Update item total
+            const itemTotal = price * newQty;
+            row.querySelector(".item-total").innerText = `₹${itemTotal.toFixed(2)}`;
+
+            // Recalculate subtotal & grand total
+            updateCartTotal();
+        } else {
+            alert(data.message || "Update failed");
+        }
+    });
+}
+
+function updateCartTotal() {
+    let subtotal = 0;
+
+    document.querySelectorAll(".item-total").forEach(el => {
+        subtotal += parseFloat(el.innerText.replace("₹", ""));
+    });
+
+    document.getElementById("subtotal").innerText = `₹${subtotal.toFixed(2)}`;
+    document.getElementById("grand-total").innerText = `₹${subtotal.toFixed(2)}`;
+}
+</script>
+
+
+{% endblock %}
